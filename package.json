@@ -1,19 +1,22 @@
 {
   "name": "project-pulse",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Explainable GitHub repository health and engineering analytics.",
+  "version": "1.0.0",
+  "description": "Explainable, read-only GitHub repository health analytics.",
   "license": "Apache-2.0",
   "type": "module",
+  "bin": { "project-pulse": "./dist/cli.js" },
+  "exports": { ".": "./dist/index.js" },
+  "files": ["dist", "README.md", "LICENSE", "SECURITY.md"],
   "scripts": {
     "check": "tsc --noEmit",
     "test": "vitest run",
-    "build": "tsc"
+    "build": "tsc",
+    "ci": "npm run check && npm test && npm run build"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   },
-  "engines": {"node": ">=22"}
+  "engines": { "node": ">=22" }
 }
