@@ -1,0 +1,21 @@
+name: Profile Pulse Preview
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 5 * * 1'
+permissions:
+  contents: read
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate portfolio snapshot
+        run: node scripts/profile-pulse.mjs | tee project-pulse-profile.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to job summary
+        run: cat project-pulse-profile.md >> "$GITHUB_STEP_SUMMARY"
