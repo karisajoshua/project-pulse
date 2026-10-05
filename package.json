@@ -1,0 +1,19 @@
+{
+  "name": "project-pulse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Explainable GitHub repository health and engineering analytics.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {"node": ">=22"}
+}
