@@ -1,12 +1,10 @@
 # ProjectPulse
 
-**Explainable GitHub repository health and engineering analytics.**
+**Explainable, read-only GitHub repository health analytics.**
 
-ProjectPulse turns observable repository signals into a transparent engineering-health score. It is designed for maintainers who want a fast view of documentation, automation, security hygiene, testing and maintenance activity without pretending that a single score can measure software quality.
+ProjectPulse converts observable repository controls into a transparent 0–100 engineering-health score. It is intentionally conservative: it inspects metadata and repository structure, never executes analyzed repository code, and never uses stars or follower counts as quality signals.
 
-## What it measures
-
-The initial model scores seven observable controls:
+## Scoring model
 
 | Signal | Weight |
 | --- | ---: |
@@ -18,19 +16,38 @@ The initial model scores seven observable controls:
 | Tests | 20 |
 | Recent maintenance activity | 15 |
 
-Every point is explainable. Missing points include a remediation message.
+Health bands are **Excellent ≥90**, **Healthy ≥75**, **Needs attention ≥50**, and **Critical <50**. Every component includes an explanation and remediation guidance when points are missing.
 
-## Principles
-
-- **Explainable:** no opaque scoring.
-- **Read-only by default:** analysis should not mutate repositories.
-- **No vanity metrics:** stars and follower counts do not determine engineering health.
-- **Safe automation:** never execute code from a repository merely to score it.
-- **Extensible:** new signals should be independently testable.
-
-## Development
+## CLI and JSON reports
 
 Requires Node.js 22+.
+
+```bash
+npm install
+npm run build
+node dist/cli.js --repository owner/repo --signals ./signals.json --pretty
+```
+
+The CLI emits a machine-readable, versioned report with `schemaVersion: "1.0"`. The signals file follows the exported `RepositorySignals` interface.
+
+## Portfolio bot
+
+`scripts/profile-pulse.mjs` powers the profile automation. It discovers repositories visible to its credential, scores maintained repositories using the same 100-point model, and generates a marker-bounded Markdown snapshot.
+
+Private repositories are privacy-safe by design: they may contribute to aggregate counts and the combined score, but their names and individual scores are never written to the public profile. Private discovery requires an account credential authorized by GitHub; missing authorization is surfaced explicitly as bot status.
+
+## Security model
+
+- Read-only analysis.
+- Never execute code from analyzed repositories.
+- Treat repository metadata and file paths as untrusted input.
+- Never publish private repository identities in profile output.
+- Never log or commit access tokens.
+- Use least-privilege credentials.
+
+See `SECURITY.md` for reporting guidance.
+
+## Development
 
 ```bash
 npm install
@@ -39,13 +56,14 @@ npm test
 npm run build
 ```
 
-## Roadmap
+CI runs type checking, tests and a production build on pushes and pull requests to `main`.
 
-1. GitHub public-repository adapter.
-2. CLI for `owner/repo` analysis.
-3. JSON report schema.
-4. Account-level portfolio summary.
-5. Profile README integration.
-6. Scheduled repository-health snapshots.
+## v1 scope
 
-ProjectPulse is early-stage and the scoring model may evolve before a stable release.
+ProjectPulse v1 includes the explainable scoring engine, GitHub signal derivation, versioned JSON reports, CLI output, automated account portfolio snapshots, public/private privacy boundaries, scheduled profile integration and authorization diagnostics.
+
+Future signals such as branch protection can be added only when they remain explainable, read-only and independently testable.
+
+## License
+
+Apache-2.0.
